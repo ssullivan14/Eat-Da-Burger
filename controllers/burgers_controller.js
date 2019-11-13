@@ -13,4 +13,44 @@ router.get("/", function(req, res) {
       res.render("index", hbsObject);
     });
   });
-  modules.export = router;
+
+  router.post("/api/burgers", function(req, res) {
+    burgers.create([
+      "name", "devour"
+    ], [
+      req.body.name, req.body.devour
+    ], function(result){
+
+      res.json({ id: result.insertId});
+    });
+  });
+
+  router.put("/api/burgers/:id", function(req, res){
+    var condition = "id = " + req.params.id;
+
+    console.log("condition", condition);
+  
+    burger.update({
+      devour: req.body.devour
+     }, condition, function(result) {
+      if (result.changedRows ==0){
+        return res.status(404).end();
+      } else {
+        res.status(200).end();
+      }
+    });
+  });
+
+  router.delete("/api/burgers/:id", function(req,res){
+    var condition = "id = " + req.params.id;
+
+    burgers.delete(condition, function(result){
+      if (result.affectedRows ==0) {
+        return res.status(404).end();
+      } else {
+        res.status(200).end();
+      }
+    });
+  });
+
+  module.exports = router;
